@@ -1,13 +1,9 @@
 class Conta:
-    def __init__(self, numero,titular,saldo):
+    def __init__(self, numero,titular,saldo=0.0):
         self.numero = numero
         self.titular = titular
-        self.saldo = saldo
+        self.saldo = float(saldo)
 
-    def __init__(self, numero,titular):
-        self.numero = numero
-        self.titular = titular
-        self.saldo = 0.0
     
     def to_dict(self):
         return {
@@ -15,6 +11,9 @@ class Conta:
             'titular': self.titular,
             'saldo': self.saldo
         }
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data['numero'], data['titular'], data['saldo'])
     
     def sacar(self,valor):
         if valor <= self.saldo:
@@ -29,10 +28,10 @@ class Conta:
         return False
 
 class ContaModel:
-    FILE_PATH = 'data/activities.json'
+    FILE_PATH = 'data/contas.json'
 
     def __init__(self):
-        self.activities = self._load()
+        self.contas = self._load()
 
     def _load(self):
         import json, os
@@ -44,25 +43,26 @@ class ContaModel:
     def _save(self):
         import json
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
-            json.dump([a.to_dict() for a in self.activities], f, indent=4, ensure_ascii=False)
+            json.dump([a.to_dict() for a in self.contas], f, indent=4, ensure_ascii=False)
 
     def get_all(self):
-        return self.activities
+        return self.contas
 
-    def get_by_id(self, conta_id):
-        return next((a for a in self.activities if a.id == conta_id), None)
+    def get_by_numero(self, numero):
+        target_numero = str(numero)
+        return next((c for c in self.contas if str(c.numero) == target_numero), None)
 
     def add(self, conta):
-        self.activities.append(conta)
+        self.contas.append(conta)
         self._save()
 
-    def update(self, updated_conta):
-        for i, a in enumerate(self.activities):
-            if a.id == updated_conta.id:
-                self.activities[i] = updated_conta
+    def update(self, conta_atualizada):
+        for i, c in enumerate(self.contas):
+            if str(c.numero) == str(conta_atualizada.numero):
+                self.contas[i] = conta_atualizada
                 self._save()
                 break
 
     def delete(self, conta_id):
-        self.activities = [a for a in self.activities if a.id != conta_id]
+        self.contas = [a for a in self.contas if a.id != conta_id]
         self._save()
