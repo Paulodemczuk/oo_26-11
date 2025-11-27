@@ -1,0 +1,14 @@
+integrantes do grupo: 
+    Paulo Nina Demczuk de Alencar - 242004920
+    Victor Alexim Amaral - 242005060
+proposta:
+sistema_bancario
+uma model: conta
+uma service: service_conta
+uma controller: controller_conta
+        duas rotas:
+        conta/criar
+        conta/saldo
+
+
+Gabriel.otaciliodev@gmail.com
